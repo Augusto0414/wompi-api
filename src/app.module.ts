@@ -23,10 +23,13 @@ import { TransactionModule } from './modules/transaction/transaction.module';
       useFactory: () => ({
         type: 'postgres',
         host: process.env.DATABASE_HOST ?? 'localhost',
-        port: parseInt(process.env.DATABASE_PORT ?? '5433', 10),
+        port: parseInt(process.env.DATABASE_PORT ?? '5432', 10),
         username: process.env.DATABASE_USERNAME ?? 'appuser',
         password: process.env.DATABASE_PASSWORD ?? 'apppass',
         database: process.env.DATABASE_NAME ?? 'appdb',
+        ssl: {
+          rejectUnauthorized: false,
+        },
         autoLoadEntities: true,
         synchronize: process.env.NODE_ENV === 'development',
         logging: process.env.NODE_ENV === 'development',
