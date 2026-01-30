@@ -21,27 +21,39 @@ import { TransactionModule } from './modules/transaction/transaction.module';
     }),
     TypeOrmModule.forRootAsync({
       useFactory: () => {
-        const isProduction = process.env.NODE_ENV === 'production';
+        // Detectar si usamos Neon/Vercel (siempre requiere SSL)
+        const isNeonDatabase =
+          process.env.DATABASE_HOST?.includes('neon.tech') ||
+          process.env.DATABASE_URL?.includes('neon.tech');
+        const useSSL = isNeonDatabase || process.env.NODE_ENV === 'production';
 
-        return {
-          type: 'postgres',
+        const config = {
+          type: 'postgres' as const,
           host: process.env.DATABASE_HOST ?? 'localhost',
           port: parseInt(process.env.DATABASE_PORT ?? '5432', 10),
           username: process.env.DATABASE_USERNAME ?? 'appuser',
           password: process.env.DATABASE_PASSWORD ?? 'apppass',
           database: process.env.DATABASE_NAME ?? 'appdb',
-          ssl: isProduction ? { rejectUnauthorized: false } : false,
-          extra: isProduction
-            ? {
-                ssl: {
-                  rejectUnauthorized: false,
-                },
-              }
-            : {},
           autoLoadEntities: true,
           synchronize: process.env.NODE_ENV === 'development',
           logging: process.env.NODE_ENV === 'development',
         };
+
+        if (useSSL) {
+          return {
+            ...config,
+            ssl: {
+              rejectUnauthorized: false,
+            },
+            extra: {
+              ssl: {
+                rejectUnauthorized: false,
+              },
+            },
+          };
+        }
+
+        return config;
       },
     }),
     TypeOrmModule.forFeature([ProductOrmEntity, ProductImageOrmEntity]),
