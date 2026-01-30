@@ -51,7 +51,6 @@ pnpm run start:prod
 
 - **API Base**: http://localhost:3000/api
 - **Swagger Docs**: http://localhost:3000/docs
-- **Health Check**: http://localhost:3000/api/health
 
 ## 📚 Documentación API (Swagger)
 
@@ -158,14 +157,32 @@ La documentación interactiva está disponible en `/docs` una vez la aplicación
 
 ## 🔐 Integración con Wompi
 
-### Configuración de API Keys
+### Documentación Oficial
 
-Las credenciales de Wompi Sandbox están configuradas en el adapter:
+- [Inicio Rápido](https://docs.wompi.co/docs/colombia/inicio-rapido/)
+- [Ambientes y Llaves](https://docs.wompi.co/docs/colombia/ambientes-y-llaves/)
 
-- **Public Key**: `pub_stagtest_g2u0HQd3ZMh05hsSgTS2lUV8t3s4mOt7`
-- **Private Key**: `prv_stagtest_5i0ZGIGiFcDQifYsXxvsny7Y37tKqFWg`
-- **Integrity Key**: `stagtest_integrity_nAIBuqayW70XpUqJS4qf4STYiISd89Fp`
-- **API URL**: `https://api-sandbox.co.uat.wompi.dev/v1`
+### Ambientes de API
+
+| Ambiente        | URL                                         |
+| --------------- | ------------------------------------------- |
+| UAT (Sandbox)   | `https://api-sandbox.co.uat.wompi.dev/v1`   |
+| UAT (Normal)    | `https://api.co.uat.wompi.dev/v1`           |
+| Producción      | `https://production.wompi.co/v1`            |
+
+### Configuración de API Keys (Sandbox/UAT)
+
+Las credenciales de Wompi Sandbox están configuradas en las variables de entorno:
+
+| Tipo                | Valor                                                |
+| ------------------- | ---------------------------------------------------- |
+| **Public Key**      | `pub_stagtest_g2u0HQd3ZMh05hsSgTS2lUV8t3s4mOt7`      |
+| **Private Key**     | `prv_stagtest_5i0ZGIGiFcDQifYsXxvsny7Y37tKqFWg`      |
+| **Integrity Key**   | `stagtest_integrity_nAIBuqayW70XpUqJS4qf4STYiISd89Fp`|
+| **Events Key**      | `stagtest_events_2PDUmhMywUkvb1LvxYnayFbmofT7w39N`   |
+| **API URL**         | `https://api-sandbox.co.uat.wompi.dev/v1`            |
+
+> ⚠️ **Importante**: Estas credenciales son solo para el ambiente Sandbox/UAT. Para producción se deben usar credenciales reales.
 
 ### Flujo de Pago
 
@@ -212,13 +229,22 @@ Crear archivo `.env` basado en `.env.example`:
 PORT=3000
 NODE_ENV=development
 
-# Wompi Sandbox (para producción usar credenciales reales)
-WOMPI_PUBLIC_KEY=pub_stagtest_...
-WOMPI_PRIVATE_KEY=prv_stagtest_...
-WOMPI_INTEGRITY_KEY=stagtest_integrity_...
+# Wompi Sandbox/UAT
 WOMPI_API_URL=https://api-sandbox.co.uat.wompi.dev/v1
+WOMPI_PUBLIC_KEY=pub_stagtest_g2u0HQd3ZMh05hsSgTS2lUV8t3s4mOt7
+WOMPI_PRIVATE_KEY=prv_stagtest_5i0ZGIGiFcDQifYsXxvsny7Y37tKqFWg
+WOMPI_INTEGRITY_SECRET=stagtest_integrity_nAIBuqayW70XpUqJS4qf4STYiISd89Fp
+WOMPI_EVENTS_KEY=stagtest_events_2PDUmhMywUkvb1LvxYnayFbmofT7w39N
 ```
+
+### Acceso a Consola Wompi (Sandbox)
+
+- **URL**: https://login.staging.wompi.dev/
+- **Usuario**: smltrs00
+- **Password**: ChallengeWompi123*
+
+> ⚠️ **Nota**: El Uusario o contraseña son incorrectos.
 
 ## 📄 Licencia
 
-MIT License
+MIT **License**

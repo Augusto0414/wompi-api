@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios, { AxiosError, AxiosInstance } from 'axios';
+import { createHash } from 'crypto';
 import {
   AcceptanceToken,
   CreateTransactionRequest,
@@ -137,17 +138,28 @@ export class WompiAdapter implements PaymentGatewayPort {
       const acceptanceData = await this.getAcceptanceToken();
 
       // Create the transaction
+      const reference = `order_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+      const currency = 'COP';
+
+      // Generate integrity signature: SHA256(reference + amount + currency + integritySecret)
+      const signature = this.generateIntegritySignature(
+        reference,
+        amountInCents,
+        currency,
+      );
+
       const transactionRequest: CreateTransactionRequest = {
         amount_in_cents: amountInCents,
-        currency: 'COP',
+        currency,
         customer_email: customerEmail ?? 'customer@test.com',
         payment_method: {
           type: 'CARD',
           token: cardToken,
           installments: 1,
         },
-        reference: `order_${Date.now()}_${Math.random().toString(36).substring(7)}`,
+        reference,
         acceptance_token: acceptanceData.acceptanceToken,
+        signature,
       };
 
       const response = await this.httpClient.post<{
@@ -260,5 +272,18 @@ export class WompiAdapter implements PaymentGatewayPort {
 
   private delay(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  /**
+   * Generates the integrity signature for Wompi transactions
+   * Formula: SHA256(reference + amountInCents + currency + integritySecret)
+   */
+  private generateIntegritySignature(
+    reference: string,
+    amountInCents: number,
+    currency: string,
+  ): string {
+    const dataToSign = `${reference}${amountInCents}${currency}${this.integritySecret}`;
+    return createHash('sha256').update(dataToSign).digest('hex');
   }
 }

@@ -7,6 +7,7 @@ export interface ProductResponseDto {
   price: number;
   stock: number;
   available: boolean;
+  imageUrl: string | null;
 }
 
 export class ProductPresenter {
@@ -18,6 +19,7 @@ export class ProductPresenter {
       price: product.price,
       stock: product.stock,
       available: product.stock > 0,
+      imageUrl: product.imageUrl ?? null,
     };
   }
 

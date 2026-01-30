@@ -1,10 +1,12 @@
 import {
-    Column,
-    CreateDateColumn,
-    Entity,
-    PrimaryGeneratedColumn,
-    UpdateDateColumn,
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
+import { ProductImageOrmEntity } from './product-image.orm-entity';
 
 @Entity('products')
 export class ProductOrmEntity {
@@ -25,6 +27,9 @@ export class ProductOrmEntity {
 
   @Column({ type: 'varchar', length: 500, nullable: true })
   imageUrl: string | null;
+
+  @OneToMany(() => ProductImageOrmEntity, (image) => image.product)
+  images: ProductImageOrmEntity[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

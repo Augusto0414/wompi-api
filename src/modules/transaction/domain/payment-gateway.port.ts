@@ -39,6 +39,7 @@ export interface CreateTransactionRequest {
   };
   reference: string;
   acceptance_token: string;
+  signature: string;
 }
 
 export interface WompiTransactionResponse {

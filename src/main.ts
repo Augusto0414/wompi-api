@@ -42,13 +42,6 @@ This API handles the payment flow for a product store with Wompi integration.
 - **Deliveries**: Handle delivery information for orders
 - **Wompi Integration**: Card tokenization and payment processing
 
-### Payment Flow:
-1. Get acceptance token from \`/api/wompi/acceptance-token\`
-2. Tokenize card using \`/api/wompi/tokenize-card\`
-3. Create transaction with \`POST /api/transactions\`
-4. Pay transaction with \`POST /api/transactions/:id/pay\`
-5. Create delivery info with \`POST /api/deliveries\`
-
 ### Security Notes:
 - Card data is tokenized using Wompi's API
 - Raw card numbers are never stored
@@ -61,7 +54,6 @@ This API handles the payment flow for a product store with Wompi integration.
     .addTag('Customers', 'Customer information management')
     .addTag('Deliveries', 'Delivery and shipping management')
     .addTag('Wompi', 'Wompi payment gateway integration')
-    .addTag('Health', 'API health check')
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
