@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: wompi-api
+    env: node
+    plan: free
+    buildCommand: bun install
+    startCommand: bun run start:prod
+    envVars:
+      - key: NODE_ENV
+        value: production
