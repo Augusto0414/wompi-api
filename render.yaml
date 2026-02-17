@@ -1,7 +1,7 @@
 services:
   - type: web
     name: wompi-api
-    env: bun
+    env: node
     buildCommand: bun install && bun run build
     startCommand: bun run start:prod
     plan: free

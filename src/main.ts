@@ -69,4 +69,10 @@ This API handles the payment flow for a product store with Wompi integration.
   console.log(`🚀 API running on http://localhost:${port}/api`);
   console.log(`📚 Swagger docs: http://localhost:${port}/docs`);
 }
-void bootstrap();
+void bootstrap().catch((err) => {
+  console.error('❌ Fatal error during bootstrap:', err);
+  if (err.stack) {
+    console.error(err.stack);
+  }
+  process.exit(1);
+});
