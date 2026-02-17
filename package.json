@@ -92,5 +92,5 @@
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   },
-  "packageManager": "bun@1.1.29"
+  "packageManager": "npm@10.9.2"
 }
