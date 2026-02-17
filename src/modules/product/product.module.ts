@@ -32,6 +32,6 @@ const PRODUCT_REPOSITORY = {
     S3StorageService,
     PRODUCT_REPOSITORY,
   ],
-  exports: [PRODUCT_REPOSITORY, TypeOrmModule],
+  exports: [PRODUCT_REPOSITORY, S3StorageService, TypeOrmModule],
 })
 export class ProductModule {}
