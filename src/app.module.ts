@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import 'reflect-metadata';
 import { appConfig, databaseConfig, s3Config, wompiConfig } from './config';
 import { ProductImageSeeder } from './database/seeders/product-image.seeder';
 import { ProductSeeder } from './database/seeders/product.seeder';
