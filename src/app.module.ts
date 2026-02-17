@@ -1,13 +1,11 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { appConfig, databaseConfig, s3Config, wompiConfig } from './config';
 import { ProductImageSeeder } from './database/seeders/product-image.seeder';
 import { ProductSeeder } from './database/seeders/product.seeder';
 import { CustomerModule } from './modules/customer/customer.module';
 import { DeliveryModule } from './modules/delivery/delivery.module';
-import { ProductImageOrmEntity } from './modules/product/infrastructure/entities/product-image.orm-entity';
-import { ProductOrmEntity } from './modules/product/infrastructure/entities/product.orm-entity';
 import { S3StorageService } from './modules/product/infrastructure/s3-storage.service';
 import { ProductModule } from './modules/product/product.module';
 import { TransactionModule } from './modules/transaction/transaction.module';
@@ -20,20 +18,43 @@ import { TransactionModule } from './modules/transaction/transaction.module';
       envFilePath: '.env',
     }),
     TypeOrmModule.forRootAsync({
-      useFactory: () => {
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const databaseHost =
+          configService.get<string>('database.host') ||
+          process.env.DATABASE_HOST ||
+          'localhost';
+        const databaseUrl =
+          configService.get<string>('database.url') || process.env.DATABASE_URL;
+
         // Detectar si usamos Neon/Vercel (siempre requiere SSL)
         const isNeonDatabase =
-          process.env.DATABASE_HOST?.includes('neon.tech') ||
-          process.env.DATABASE_URL?.includes('neon.tech');
+          databaseHost?.includes('neon.tech') ||
+          databaseUrl?.includes('neon.tech');
         const useSSL = isNeonDatabase || process.env.NODE_ENV === 'production';
 
         const config = {
           type: 'postgres' as const,
-          host: process.env.DATABASE_HOST ?? 'localhost',
-          port: parseInt(process.env.DATABASE_PORT ?? '5432', 10),
-          username: process.env.DATABASE_USERNAME ?? 'appuser',
-          password: process.env.DATABASE_PASSWORD ?? 'apppass',
-          database: process.env.DATABASE_NAME ?? 'appdb',
+          host:
+            configService.get<string>('database.host') ||
+            process.env.DATABASE_HOST ||
+            'localhost',
+          port:
+            configService.get<number>('database.port') ||
+            parseInt(process.env.DATABASE_PORT || '5432', 10),
+          username:
+            configService.get<string>('database.username') ||
+            process.env.DATABASE_USERNAME ||
+            'appuser',
+          password:
+            configService.get<string>('database.password') ||
+            process.env.DATABASE_PASSWORD ||
+            'apppass',
+          database:
+            configService.get<string>('database.database') ||
+            process.env.DATABASE_NAME ||
+            'appdb',
           autoLoadEntities: true,
           synchronize: process.env.NODE_ENV === 'development',
           logging: process.env.NODE_ENV === 'development',
@@ -56,7 +77,6 @@ import { TransactionModule } from './modules/transaction/transaction.module';
         return config;
       },
     }),
-    TypeOrmModule.forFeature([ProductOrmEntity, ProductImageOrmEntity]),
     ProductModule,
     TransactionModule,
     CustomerModule,
