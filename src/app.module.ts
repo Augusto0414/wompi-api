@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { appConfig, databaseConfig, s3Config, wompiConfig } from './config';
 import { ProductImageSeeder } from './database/seeders/product-image.seeder';
@@ -18,17 +18,11 @@ import { TransactionModule } from './modules/transaction/transaction.module';
       envFilePath: '.env',
     }),
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => {
-        const databaseHost =
-          configService.get<string>('database.host') ||
-          process.env.DATABASE_HOST ||
-          'localhost';
-        const databaseUrl =
-          configService.get<string>('database.url') || process.env.DATABASE_URL;
-
+      useFactory: () => {
         // Detectar si usamos Neon/Vercel (siempre requiere SSL)
+        const databaseHost = process.env.DATABASE_HOST || 'localhost';
+        const databaseUrl = process.env.DATABASE_URL;
+
         const isNeonDatabase =
           databaseHost?.includes('neon.tech') ||
           databaseUrl?.includes('neon.tech');
@@ -36,25 +30,11 @@ import { TransactionModule } from './modules/transaction/transaction.module';
 
         const config = {
           type: 'postgres' as const,
-          host:
-            configService.get<string>('database.host') ||
-            process.env.DATABASE_HOST ||
-            'localhost',
-          port:
-            configService.get<number>('database.port') ||
-            parseInt(process.env.DATABASE_PORT || '5432', 10),
-          username:
-            configService.get<string>('database.username') ||
-            process.env.DATABASE_USERNAME ||
-            'appuser',
-          password:
-            configService.get<string>('database.password') ||
-            process.env.DATABASE_PASSWORD ||
-            'apppass',
-          database:
-            configService.get<string>('database.database') ||
-            process.env.DATABASE_NAME ||
-            'appdb',
+          host: process.env.DATABASE_HOST || 'localhost',
+          port: parseInt(process.env.DATABASE_PORT || '5432', 10),
+          username: process.env.DATABASE_USERNAME || 'appuser',
+          password: process.env.DATABASE_PASSWORD || 'apppass',
+          database: process.env.DATABASE_NAME || 'appdb',
           autoLoadEntities: true,
           synchronize: process.env.NODE_ENV === 'development',
           logging: process.env.NODE_ENV === 'development',
