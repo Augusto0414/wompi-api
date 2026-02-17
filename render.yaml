@@ -3,7 +3,7 @@ services:
     name: wompi-api
     env: node
     buildCommand: npm install && npm run build
-    startCommand: node -r reflect-metadata dist/main
+    startCommand: npm run start:prod
     plan: free
     envVars:
       - key: NODE_ENV
