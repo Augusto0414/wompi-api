@@ -17,45 +17,22 @@ import { TransactionModule } from './modules/transaction/transaction.module';
       load: [appConfig, databaseConfig, wompiConfig, s3Config],
       envFilePath: '.env',
     }),
-    TypeOrmModule.forRootAsync({
-      useFactory: () => {
-        // Detectar si usamos Neon/Vercel (siempre requiere SSL)
-        const databaseHost = process.env.DATABASE_HOST || 'localhost';
-        const databaseUrl = process.env.DATABASE_URL;
-
-        const isNeonDatabase =
-          databaseHost?.includes('neon.tech') ||
-          databaseUrl?.includes('neon.tech');
-        const useSSL = isNeonDatabase || process.env.NODE_ENV === 'production';
-
-        const config = {
-          type: 'postgres' as const,
-          host: process.env.DATABASE_HOST || 'localhost',
-          port: parseInt(process.env.DATABASE_PORT || '5432', 10),
-          username: process.env.DATABASE_USERNAME || 'appuser',
-          password: process.env.DATABASE_PASSWORD || 'apppass',
-          database: process.env.DATABASE_NAME || 'appdb',
-          autoLoadEntities: true,
-          synchronize: process.env.NODE_ENV === 'development',
-          logging: process.env.NODE_ENV === 'development',
-        };
-
-        if (useSSL) {
-          return {
-            ...config,
-            ssl: {
-              rejectUnauthorized: false,
-            },
-            extra: {
-              ssl: {
-                rejectUnauthorized: false,
-              },
-            },
-          };
-        }
-
-        return config;
-      },
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: process.env.DATABASE_HOST || 'localhost',
+      port: parseInt(process.env.DATABASE_PORT || '5432', 10),
+      username: process.env.DATABASE_USERNAME || 'appuser',
+      password: process.env.DATABASE_PASSWORD || 'apppass',
+      database: process.env.DATABASE_NAME || 'appdb',
+      autoLoadEntities: true,
+      synchronize: process.env.NODE_ENV === 'development',
+      logging: process.env.NODE_ENV === 'development',
+      ssl: process.env.NODE_ENV === 'production' 
+        ? { rejectUnauthorized: false }
+        : false,
+      extra: process.env.NODE_ENV === 'production' 
+        ? { ssl: { rejectUnauthorized: false } }
+        : {},
     }),
     ProductModule,
     TransactionModule,
