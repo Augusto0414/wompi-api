@@ -41,7 +41,7 @@ export class CreateTransactionUseCase {
       productId: input.productId,
       customerId: input.customerId,
       productPrice: product.price,
-      shippingCost: input.shippingCost,
+      shippingCost: input.shippingCost ?? 0,
     });
 
     await this.transactionRepository.create(transaction);

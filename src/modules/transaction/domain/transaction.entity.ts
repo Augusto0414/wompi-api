@@ -8,6 +8,7 @@ export class Transaction {
     public readonly productPrice: number,
     public readonly baseCharge: number,
     public readonly shippingCost: number,
+    public readonly vatAmount: number,
     public readonly totalAmount: number,
     private status: TransactionStatus,
     public wompiTransactionId: string | null = null,
@@ -24,8 +25,9 @@ export class Transaction {
     shippingCost?: number;
   }): Transaction {
     const baseCharge = props.baseCharge ?? 5000;
-    const shippingCost = props.shippingCost ?? 8000;
-    const totalAmount = props.productPrice + baseCharge + shippingCost;
+    const shippingCost = props.shippingCost ?? 0;
+    const vatAmount = props.productPrice * 0.19;
+    const totalAmount = props.productPrice + vatAmount + baseCharge + shippingCost;
 
     return new Transaction(
       props.id,
@@ -34,6 +36,7 @@ export class Transaction {
       props.productPrice,
       baseCharge,
       shippingCost,
+      vatAmount,
       totalAmount,
       TransactionStatus.PENDING,
     );

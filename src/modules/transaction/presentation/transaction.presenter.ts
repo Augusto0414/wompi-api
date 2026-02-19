@@ -8,6 +8,7 @@ export interface TransactionResponseDto {
   productPrice: number;
   baseCharge: number;
   shippingCost: number;
+  vatAmount: number;
   totalAmount: number;
   status: TransactionStatus;
   wompiTransactionId: string | null;
@@ -24,6 +25,7 @@ export class TransactionPresenter {
       productPrice: transaction.productPrice,
       baseCharge: transaction.baseCharge,
       shippingCost: transaction.shippingCost,
+      vatAmount: transaction.vatAmount,
       totalAmount: transaction.totalAmount,
       status: transaction.getStatus(),
       wompiTransactionId: transaction.wompiTransactionId,
