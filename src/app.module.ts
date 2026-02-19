@@ -28,11 +28,11 @@ import { TransactionModule } from './modules/transaction/transaction.module';
       synchronize: process.env.NODE_ENV === 'development',
       logging: process.env.NODE_ENV === 'development',
       ssl:
-        process.env.NODE_ENV === 'development'
+        process.env.NODE_ENV === 'production'
           ? { rejectUnauthorized: false }
           : false,
       extra:
-        process.env.NODE_ENV === 'development'
+        process.env.NODE_ENV === 'production'
           ? { ssl: { rejectUnauthorized: false } }
           : {},
     }),
